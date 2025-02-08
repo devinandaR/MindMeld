@@ -1,14 +1,13 @@
-# [Project Name] 🎯
+# [MindMeld] 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: [8 Bit]
 
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Member 1: [Devinanda R] - [SRM Institute of Science and Technology,Trichy]
+- Member 2: [Aparna Sankar] - [College of Engineering,Trivandrum]
 
 ### Hosted Project Link
 [mention your project hosted project link here]
