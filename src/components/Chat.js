@@ -273,19 +273,36 @@ const Chat = () => {
       };
       
       // Check for emergency keywords in the response
-      const emergencyKeywords = [
-        'suicid', 'self-harm', 'crisis', 'emergency',
-        'severe depression', 'acute anxiety', 'trauma',
-        'psychotic', 'immediate action needed'
-      ];
+      const emergencyKeywords = {
+        severe: [
+          'suicid', 'kill myself', 'want to die', 'end my life',
+          'self-harm', 'cutting myself', 'hurting myself',
+          'planning to end', 'no reason to live', 'better off dead',
+          'cant take it anymore', 'psychotic episode', 'hearing voices',
+          'violent thoughts', 'harming others'
+        ],
+        moderate: [
+          'severe depression', 'acute anxiety', 'trauma',
+          'ptsd', 'panic attack', 'crisis'
+        ]
+      };
       
-      sections.isEmergency = emergencyKeywords.some(keyword => 
-        text.toLowerCase().includes(keyword)
+      // Only trigger emergency for severe keywords or multiple moderate keywords
+      const hasSevereKeywords = emergencyKeywords.severe.some(keyword => 
+        text.toLowerCase().includes(keyword) || 
+        messageContent.toLowerCase().includes(keyword)
       );
+      
+      const moderateKeywordCount = emergencyKeywords.moderate.filter(keyword => 
+        text.toLowerCase().includes(keyword) || 
+        messageContent.toLowerCase().includes(keyword)
+      ).length;
+
+      sections.isEmergency = hasSevereKeywords || moderateKeywordCount >= 2;
 
       // If emergency is detected, show modal with relevant specialists
       if (sections.isEmergency) {
-        const relevantSpecialists = getRelevantSpecialists(text);
+        const relevantSpecialists = getRelevantSpecialists(text + ' ' + messageContent);
         setSpecialists(relevantSpecialists);
         setShowEmergencyModal(true);
       }
@@ -357,76 +374,71 @@ const Chat = () => {
         `${m.type === 'user' ? 'User' : 'Assistant'}: ${m.content}`
       ).join('\n');
 
-      const prompt = `You are a direct, solution-focused therapist with expertise in crisis intervention. Your role is to provide immediate support while recognizing when specialist intervention is needed.
+      const prompt = `You are an empathetic therapist having a conversation with a client. Your goal is to understand their situation thoroughly before providing solutions.
 
 Previous conversation:
 ${conversationContext}
 
 Latest message: "${userMessage}"
 
-CRITICAL SAFETY CHECK:
-First, assess for any severe conditions or crisis situations:
-- Suicidal thoughts or intentions
-- Self-harm
-- Severe depression
-- Acute anxiety or panic
-- Trauma responses
-- Psychotic symptoms
-- Other emergency situations
+CONVERSATION PHASE CHECK:
+1. Initial Contact (0-1 messages): Ask 2-3 key questions to understand the situation
+2. Understanding Phase (2-3 messages): Clarify and validate understanding
+3. Solution Phase (4+ messages): Provide specific solutions and techniques
 
-If ANY of these are detected, you MUST:
-1. Provide immediate crisis resources
-2. Include emergency contact numbers
-3. Recommend specific types of specialists
-4. Emphasize the importance of immediate professional help
+RESPONSE GUIDELINES:
+${messages.length <= 3 ? `
+EARLY CONVERSATION PHASE:
+- Show empathy and build rapport
+- Ask 2-3 specific, open-ended questions about:
+  * The main concern/feeling
+  * Duration and intensity
+  * Impact on daily life
+- Do NOT provide solutions yet, focus on understanding` 
+:
+`SOLUTION PHASE:
+- Summarize your understanding
+- Provide specific, tailored solutions
+- Include practical techniques and exercises
+- Structure solutions clearly with steps`}
 
 Format your response EXACTLY as shown below:
 
 Initial Thoughts:
-[Keep very brief - 1 sentence maximum]
+[Brief assessment of the situation]
 
 Mental Health Concerns:
 [List identified concerns with severity levels]
 
 Therapeutic Response:
-[IF CRISIS DETECTED, USE THIS FORMAT:]
-IMMEDIATE ACTION NEEDED:
-1. Emergency Resources:
-   - National Suicide Prevention Lifeline: 988 (US)
-   - Crisis Text Line: Text HOME to 741741
-   - Emergency Services: 911 (US)
+[IF IN EARLY PHASE (0-3 messages):]
+I understand [reflect key points they've shared]. To help me better understand your situation:
+[Ask 2-3 specific, relevant questions]
 
-2. Specialist Referral:
-   - Type of Specialist: [Specific type - e.g., Trauma Therapist, Crisis Counselor]
-   - Why This Specialist: [Brief explanation]
-   - How to Find One: [Practical steps]
+[IF IN SOLUTION PHASE (4+ messages):]
+Based on our conversation, I understand [summarize understanding]. Here are specific techniques that might help:
 
-3. Immediate Safety Steps:
-   [List immediate safety measures]
-
-[IF NO CRISIS DETECTED, USE THIS FORMAT:]
-Here are specific techniques you can try right now:
-
-1. [First Technique Name]:
+1. [First Technique]:
 - Steps: [Clear numbered steps]
 - Duration: [Specific time]
 - Benefits: [Concrete benefits]
 - Example: [Specific scenario]
 
-2. [Second Technique Name]:
+2. [Second Technique]:
 - Steps: [Clear numbered steps]
 - Duration: [Specific time]
 - Benefits: [Concrete benefits]
 - Example: [Specific scenario]
 
-3. [Third Technique Name]:
+3. [Third Technique]:
 - Steps: [Clear numbered steps]
 - Duration: [Specific time]
 - Benefits: [Concrete benefits]
 - Example: [Specific scenario]
 
-Follow-up Question:
-[SKIP THIS SECTION - Do not ask questions]
+Follow-up:
+[IF IN EARLY PHASE: Include your questions here]
+[IF IN SOLUTION PHASE: Skip this section]
 
 Important: For any severe symptoms or crisis situations, ALWAYS emphasize the importance of professional help and provide emergency resources first.`;
       
