@@ -2,24 +2,28 @@
 
 
 ## Basic Details
-### Team Name: [8 Bit]
+### Team Name: 8 Bit
 
 
 ### Team Members
-- Member 1: [Devinanda R] - [SRM Institute of Science and Technology,Trichy]
-- Member 2: [Aparna Sankar] - [College of Engineering,Trivandrum]
+- Member 1: Devinanda R - SRM Institute of Science and Technology,Trichy
+- Member 2: Aparna Sankar - College of Engineering,Trivandrum
 
 ### Hosted Project Link
 [mention your project hosted project link here]
 
 ### Project Description
-[2-3 lines about what your project does]
+Users can share their mental health concerns or issues through a user-friendly interface. The platform utilizes a curated database of research papers and articles on mental health to analyze the user's input and suggest the most appropriate solutions or coping strategies based on evidence-based practices.
+
+In cases where the user's issues require professional intervention, the platform offers a referral system that connects users with prominent psychologists and mental health professionals in their area. This dual approach not only provides immediate support through accessible information but also ensures that users can seek professional help when necessary, fostering a holistic approach to mental well-being.
+
+The platform aims to reduce the stigma surrounding mental health issues, promote awareness, and facilitate access to valuable resources, ultimately contributing to improved mental health outcomes for users.
 
 ### The Problem statement
-[What ridiculous problem are you solving?]
+Many individuals face challenges in finding appropriate resources and support for their mental health concerns. They often feel overwhelmed by the vast amount of information available online and may not know when to seek professional help. This lack of accessible, personalized support can prolong distress and hinder proactive steps toward well-being. The Mental Health Support Platform aims to address these issues by allowing users to share their concerns and receive tailored, research-backed solutions. It also connects users with qualified psychologists, ensuring they have the necessary guidance for their mental health journey.
 
 ### The Solution
-[How are you solving it? Keep it fun!]
+The Mental Health Support Platform offers a user-friendly web application where individuals can share their mental health concerns and receive personalized, evidence-based recommendations. By utilizing a curated database of research papers, the platform provides tailored coping strategies for specific issues. Additionally, it features a referral system that connects users with qualified psychologists for professional help when needed. This approach empowers users with valuable information while facilitating timely access to mental health professionals. Ultimately, the platform promotes proactive management of mental health challenges and overall well-being.
 
 ## Technical Details
 ### Technologies/Components Used
