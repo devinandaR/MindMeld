@@ -60,8 +60,8 @@ MindMeld Demo: Watch our AI-powered mental health assistant provide real-time th
 
 
 ## Team Contributions
-- Devinanda R: [Specific contributions]
-- Aparna Sankar: [Specific contributions]
+- Devinanda R: Frontend and API integration
+- Aparna Sankar: Gemini reply refining,Documentation
 -
 
 ---
