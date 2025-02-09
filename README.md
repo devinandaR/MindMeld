@@ -10,7 +10,7 @@
 - Member 2: Aparna Sankar - College of Engineering,Trivandrum
 
 ### Hosted Project Link
-[mention your project hosted project link here]
+http://mind-meld-three.vercel.app
 
 ### Project Description
 Users can share their mental health concerns or issues through a user-friendly interface. The platform utilizes a curated database of research papers and articles on mental health to analyze the user's input and suggest the most appropriate solutions or coping strategies based on evidence-based practices.
@@ -37,61 +37,32 @@ For Software:
 ### Implementation
 For Software:
 # Installation
-[commands]
+
 npm install
-[commands]
+npm start
 
 ### Project Documentation
 For Software:
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+https://drive.google.com/drive/folders/1OQcR7EKoE6XDoSn-ewtXet8EqMzMdAvr
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
-
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Team](Add photo of your team here)
+https://drive.google.com/drive/folders/1Oan98wpPcx9wepz8lRYngd84694VEfK8
+This workflow diagram illustrates the MindMeld mental health support system architecture. Starting with the user interaction through the frontend interface, data flows to the backend server which interfaces with Google's Gemini AI model. Gemini processes and analyzes user inputs to generate appropriate responses. The response system branches into three paths: direct advice, psychologist recommendations, and chatbot interactions, all converging to provide comprehensive mental health support to the user. The green nodes represent user entry and final help delivery points, while orange nodes indicate the processing and decision-making components of the system.
 
 
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+https://drive.google.com/drive/folders/1Oc_XfiRRfFe7dI8YiOaH-1NfrpnJqwck
+MindMeld Demo: Watch our AI-powered mental health assistant provide real-time therapeutic support, emergency response features, and personalized mental health guidance. Experience how we're making mental health support accessible, immediate, and judgment-free through the power of AI and professional resources.
 
-# Additional Demos
-[Add any extra demo materials/links]
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Devinanda R: [Specific contributions]
+- Aparna Sankar: [Specific contributions]
+-
 
 ---
 Made with ❤️ at TinkerHub
