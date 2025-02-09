@@ -7,6 +7,8 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [specialists, setSpecialists] = useState([]);
   const messagesEndRef = useRef(null);
   const [assessment, setAssessment] = useState({
     conditions: {},
@@ -15,6 +17,142 @@ const Chat = () => {
     currentFocus: null
   });
   const [analysisHistory, setAnalysisHistory] = useState([]);
+
+  // Example specialists database - in a real app, this would come from an API
+  const specialistsDatabase = {
+    'suicide': [
+      {
+        name: 'Dr. Sarah Johnson',
+        specialty: 'Crisis Intervention Specialist',
+        experience: '15 years',
+        contact: '+1-555-0123',
+        availability: '24/7 Emergency',
+        location: 'Downtown Medical Center'
+      },
+      {
+        name: 'Dr. Michael Chen',
+        specialty: 'Emergency Psychiatrist',
+        experience: '12 years',
+        contact: '+1-555-0124',
+        availability: '24/7 Emergency',
+        location: 'Central Hospital'
+      }
+    ],
+    'trauma': [
+      {
+        name: 'Dr. Emily Rodriguez',
+        specialty: 'Trauma Therapist',
+        experience: '10 years',
+        contact: '+1-555-0125',
+        availability: 'Mon-Fri, Emergency Available',
+        location: 'Healing Center'
+      },
+      {
+        name: 'Dr. James Wilson',
+        specialty: 'PTSD Specialist',
+        experience: '18 years',
+        contact: '+1-555-0126',
+        availability: 'Mon-Sat, Emergency Available',
+        location: 'Veterans Support Center'
+      }
+    ],
+    'depression': [
+      {
+        name: 'Dr. Lisa Thompson',
+        specialty: 'Clinical Depression Specialist',
+        experience: '14 years',
+        contact: '+1-555-0127',
+        availability: 'Mon-Fri, Emergency Available',
+        location: 'Wellness Center'
+      },
+      {
+        name: 'Dr. David Park',
+        specialty: 'Mood Disorders Expert',
+        experience: '16 years',
+        contact: '+1-555-0128',
+        availability: 'Mon-Sat',
+        location: 'Mind & Body Clinic'
+      }
+    ]
+  };
+
+  const EmergencyModal = ({ isOpen, onClose, specialists }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-red-600">Emergency Assistance Available</h2>
+              <button 
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mb-4 p-4 bg-red-50 rounded-lg">
+              <p className="text-red-700 font-medium">
+                Based on your message, we strongly recommend immediate professional help.
+                Below are specialists available for immediate consultation:
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {specialists.map((specialist, index) => (
+                <div key={index} className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
+                  <h3 className="text-xl font-semibold text-gray-800">{specialist.name}</h3>
+                  <p className="text-gray-600">{specialist.specialty}</p>
+                  <p className="text-gray-600">{specialist.experience} experience</p>
+                  <p className="text-gray-600">{specialist.location}</p>
+                  <p className="text-gray-600 mb-3">Availability: {specialist.availability}</p>
+                  <a
+                    href={`tel:${specialist.contact}`}
+                    className="inline-block bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                  >
+                    Contact Now
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <p className="text-blue-700">
+                Remember: If you're experiencing an immediate crisis, also call:
+                <br />
+                • Emergency Services: 911
+                <br />
+                • National Suicide Prevention Lifeline: 988
+                <br />
+                • Crisis Text Line: Text HOME to 741741
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getRelevantSpecialists = (text) => {
+    let relevantSpecialists = [];
+    
+    if (text.toLowerCase().includes('suicid')) {
+      relevantSpecialists = [...relevantSpecialists, ...specialistsDatabase.suicide];
+    }
+    if (text.toLowerCase().includes('trauma') || text.toLowerCase().includes('ptsd')) {
+      relevantSpecialists = [...relevantSpecialists, ...specialistsDatabase.trauma];
+    }
+    if (text.toLowerCase().includes('depress')) {
+      relevantSpecialists = [...relevantSpecialists, ...specialistsDatabase.depression];
+    }
+    
+    // Remove duplicates if any
+    return Array.from(new Set(relevantSpecialists));
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -129,13 +267,31 @@ const Chat = () => {
       const sections = {
         initialThoughts: [],
         mentalHealthConcerns: [],
-        suggestedActivities: [],
-        researchBasedSolutions: [],
-        followUpQuestion: ''
+        therapeuticResponse: '',
+        followUpQuestion: '',
+        isEmergency: false
       };
       
+      // Check for emergency keywords in the response
+      const emergencyKeywords = [
+        'suicid', 'self-harm', 'crisis', 'emergency',
+        'severe depression', 'acute anxiety', 'trauma',
+        'psychotic', 'immediate action needed'
+      ];
+      
+      sections.isEmergency = emergencyKeywords.some(keyword => 
+        text.toLowerCase().includes(keyword)
+      );
+
+      // If emergency is detected, show modal with relevant specialists
+      if (sections.isEmergency) {
+        const relevantSpecialists = getRelevantSpecialists(text);
+        setSpecialists(relevantSpecialists);
+        setShowEmergencyModal(true);
+      }
+      
       // Split text into sections
-      const sectionRegex = /(Initial Thoughts:|Mental Health Concerns:|Follow-up Question:)([\s\S]*?)(?=(Initial Thoughts:|Mental Health Concerns:|Follow-up Question:|$))/g;
+      const sectionRegex = /(Initial Thoughts:|Mental Health Concerns:|Therapeutic Response:|Follow-up Question:)([\s\S]*?)(?=(Initial Thoughts:|Mental Health Concerns:|Therapeutic Response:|Follow-up Question:|$))/g;
       let match;
       
       while ((match = sectionRegex.exec(text)) !== null) {
@@ -146,28 +302,35 @@ const Chat = () => {
           sections.initialThoughts = cleanContent.split('\n').map(line => line.trim()).filter(Boolean);
         } else if (header.includes('Mental Health Concerns:')) {
           sections.mentalHealthConcerns = cleanContent.split('\n').map(line => line.trim()).filter(Boolean);
+        } else if (header.includes('Therapeutic Response:')) {
+          sections.therapeuticResponse = cleanContent;
         } else if (header.includes('Follow-up Question:')) {
           sections.followUpQuestion = cleanContent;
         }
       }
 
-      // For debugging
-      console.log('Parsed sections:', sections);
-      console.log('Original text:', text);
-
       return {
         sections,
         jsx: (
           <div className="space-y-4">
-            {sections.followUpQuestion ? (
-              <div className="text-gray-700 leading-relaxed">
-                {sections.followUpQuestion}
-              </div>
-            ) : (
-              <div className="text-gray-700 leading-relaxed">
-                I'm here to listen and understand. Could you tell me more about what's on your mind?
-              </div>
-            )}
+            <div className={`text-gray-700 leading-relaxed ${sections.isEmergency ? 'border-l-4 border-red-500 pl-4' : ''}`}>
+              {sections.isEmergency && (
+                <div className="bg-red-50 p-4 rounded-lg mb-4">
+                  <h3 className="text-red-700 font-bold mb-2">Important Notice</h3>
+                  <p className="text-red-600">
+                    Based on your message, I strongly recommend seeking immediate professional help. 
+                    Please don't hesitate to use the emergency resources provided below.
+                  </p>
+                </div>
+              )}
+              {sections.therapeuticResponse && (
+                <div className={sections.isEmergency ? 'font-medium' : ''}>
+                  {sections.therapeuticResponse.split('\n').map((paragraph, index) => (
+                    <p key={index} className="mb-4">{paragraph}</p>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )
       };
@@ -177,7 +340,8 @@ const Chat = () => {
         sections: {},
         jsx: (
           <div className="text-gray-700 leading-relaxed">
-            I'm here to listen. What would you like to share with me?
+            If you're experiencing a crisis, please call 988 (US) immediately for support. 
+            Otherwise, I'm here to listen and help. What would you like to share?
           </div>
         )
       };
@@ -193,49 +357,82 @@ const Chat = () => {
         `${m.type === 'user' ? 'User' : 'Assistant'}: ${m.content}`
       ).join('\n');
 
-      const prompt = `You are an experienced mental health professional conducting an assessment. Your goal is to understand the person's situation through careful, empathetic questioning.
+      const prompt = `You are a direct, solution-focused therapist with expertise in crisis intervention. Your role is to provide immediate support while recognizing when specialist intervention is needed.
 
 Previous conversation:
 ${conversationContext}
 
 Latest message: "${userMessage}"
 
-Current assessment state:
-${JSON.stringify(assessment.conditions, null, 2)}
+CRITICAL SAFETY CHECK:
+First, assess for any severe conditions or crisis situations:
+- Suicidal thoughts or intentions
+- Self-harm
+- Severe depression
+- Acute anxiety or panic
+- Trauma responses
+- Psychotic symptoms
+- Other emergency situations
 
-Instructions:
-1. Analyze the message and previous context carefully.
-2. Consider:
-   - Core emotions or concerns expressed
-   - Unclear aspects needing exploration
-   - Critical information gaps
-   - Most insightful area to explore next
+If ANY of these are detected, you MUST:
+1. Provide immediate crisis resources
+2. Include emergency contact numbers
+3. Recommend specific types of specialists
+4. Emphasize the importance of immediate professional help
 
-3. Formulate ONE thoughtful follow-up question that:
-   - Is specific yet open-ended
-   - Shows empathy and understanding
-   - Feels natural in conversation
-   - Helps understand the root cause
-
-Format your response EXACTLY as shown below, including the exact headers:
+Format your response EXACTLY as shown below:
 
 Initial Thoughts:
-[Write your internal assessment here]
+[Keep very brief - 1 sentence maximum]
 
 Mental Health Concerns:
-[List concerns with confidence levels]
+[List identified concerns with severity levels]
+
+Therapeutic Response:
+[IF CRISIS DETECTED, USE THIS FORMAT:]
+IMMEDIATE ACTION NEEDED:
+1. Emergency Resources:
+   - National Suicide Prevention Lifeline: 988 (US)
+   - Crisis Text Line: Text HOME to 741741
+   - Emergency Services: 911 (US)
+
+2. Specialist Referral:
+   - Type of Specialist: [Specific type - e.g., Trauma Therapist, Crisis Counselor]
+   - Why This Specialist: [Brief explanation]
+   - How to Find One: [Practical steps]
+
+3. Immediate Safety Steps:
+   [List immediate safety measures]
+
+[IF NO CRISIS DETECTED, USE THIS FORMAT:]
+Here are specific techniques you can try right now:
+
+1. [First Technique Name]:
+- Steps: [Clear numbered steps]
+- Duration: [Specific time]
+- Benefits: [Concrete benefits]
+- Example: [Specific scenario]
+
+2. [Second Technique Name]:
+- Steps: [Clear numbered steps]
+- Duration: [Specific time]
+- Benefits: [Concrete benefits]
+- Example: [Specific scenario]
+
+3. [Third Technique Name]:
+- Steps: [Clear numbered steps]
+- Duration: [Specific time]
+- Benefits: [Concrete benefits]
+- Example: [Specific scenario]
 
 Follow-up Question:
-[Write your single question here, making it conversational and empathetic]
+[SKIP THIS SECTION - Do not ask questions]
 
-Important: Make sure to include all three headers exactly as shown above.`;
+Important: For any severe symptoms or crisis situations, ALWAYS emphasize the importance of professional help and provide emergency resources first.`;
       
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      
-      // For debugging
-      console.log('AI Response:', text);
 
       // Format the response and get sections
       const { sections, jsx } = formatResponse(text, userMessage);
@@ -280,7 +477,7 @@ Important: Make sure to include all three headers exactly as shown above.`;
       console.error('Error:', error);
       setMessages(prev => [...prev, {
         type: 'bot',
-        content: "I'm here to listen and help. Could you tell me more about what's on your mind?",
+        content: "I hear you, and I understand this might be difficult to discuss. Would you like to tell me more about what you're experiencing?",
         formatted: false
       }]);
     } finally {
@@ -306,6 +503,11 @@ Important: Make sure to include all three headers exactly as shown above.`;
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      <EmergencyModal 
+        isOpen={showEmergencyModal} 
+        onClose={() => setShowEmergencyModal(false)}
+        specialists={specialists}
+      />
       <div className="bg-white border-b p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-800">MindMeld Chat</h1>
         <button
