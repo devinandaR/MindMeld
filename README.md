@@ -28,22 +28,17 @@ The Mental Health Support Platform offers a user-friendly web application where 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+- Javascript
+- React.js,Tailwind css,Google's Gen AI, Js pdf
+- babel,webpack,eslint,google/gen ai, jspdf,react-dom
+- node_modules,babel-loader,
 
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
 
 ### Implementation
 For Software:
 # Installation
 [commands]
-
-# Run
+npm install
 [commands]
 
 ### Project Documentation
